@@ -26,14 +26,14 @@
 
 3、使用示例目前分为4种，其中3种为特殊处理， 根据你的返回值使用以下某一种，关注对应的即可
 
-4、如果为案件详情的接口，请转到 **[案件详情特殊应用](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcncgOWsKWYcmwiaUHMFDhgBd)**
+4、如果为案件详情的接口，请转到 **案件详情特殊应用**
 
-| **规则项** | **规则说明**         | **返回值示例**                                               | **规则链接**                                                 |
-| ---------- | -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 普通规则   | 返回值为案件信息     |                                                              | **[规则1](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcngIeS6KGiIGW8QZJ05ppHbc)** |
-| 特殊规则1  | 返回值为联系资料信息 |                                                              | **[规则2](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnA6E04a4KK8USOEBZHI9tEf)** |
-| 特殊规则2  | 返回值为催记信息     |                                                              | **[规则3](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnqyoAecA80sEoIbspRO045g)** |
-| 特殊规则3  | 返回值为键值对       | Dto { name:"卡号",   value:"12345678" }或者Dto{ accountId: customerId:List<KVDto>{  name: value: }, { name: value: }} | **[规则4](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnwmOSU4CGYa2KEZgoZYJNoh)** |
+| **规则项** | **规则说明**         | **返回值示例**                                               | **规则链接** |
+| ---------- | -------------------- | ------------------------------------------------------------ | ------------ |
+| 普通规则   | 返回值为案件信息     |                                                              | **规则1**    |
+| 特殊规则1  | 返回值为联系资料信息 |                                                              | **规则2**    |
+| 特殊规则2  | 返回值为催记信息     |                                                              | **规则3**    |
+| 特殊规则3  | 返回值为键值对       | Dto { name:"卡号",   value:"12345678" }或者Dto{ accountId: customerId:List<KVDto>{  name: value: }, { name: value: }} | **规则4**    |
 
 # 三、具体使用示例
 
@@ -52,7 +52,6 @@
  */
 @ApiModel("脱敏基础类型")
 public class DesensitizedBaseDto extends Basic implements IDesensitized {
-
 
     /**
      * 卡号
@@ -190,7 +189,7 @@ public class BaseKeyValueDto extends DesensitizedBaseDto {
 }
 ```
 
-# 四、案件详情特殊应用
+# 四、详情特殊应用
 
 案件详情可以对脱敏字段申请明文查看并且在脱敏过程中需要修改字段类型，在返回时需要区分案件详情与其他功能
 
@@ -202,13 +201,10 @@ public class BaseKeyValueDto extends DesensitizedBaseDto {
 
 ```Java
 /**
- * 案件详情页根据案件id获取联系电话
- * hao
  *
- * @author: Mr Jia
  * @time: 2022/6/1 16:52
  */
-@ApiOperation("案件详情页根据案件id获取联系电话")
+@ApiOperation("")
 @PostMapping("/getContactTelephoneByCaseId")
 @ClearTextAnnotation
 public Result<ContactFilterDto> getContactTelephoneByCaseId(@Validated @RequestBody ContactFilterParamBo paramBo) {
@@ -223,7 +219,7 @@ public Result<ContactFilterDto> getContactTelephoneByCaseId(@Validated @RequestB
 **注：案件详情返回的字段脱敏过程中需要修改字段类型，所以字段默认都为Object类型**
 
 ```Java
-@ApiModel("脱敏基础类型-案件详情")
+@ApiModel("脱敏基础类型-详情")
 public class DynamicDesensitizedBaseDto extends Basic implements IDesensitized {
 
     /**
