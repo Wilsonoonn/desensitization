@@ -1,16 +1,18 @@
-脱敏规则使用说明
-一、判断自己是否需要脱敏
+# 一、判断自己是否需要脱敏
+
 如果查询的数据中包含以下字段，那就需要脱敏
 
 案件信息包含：卡号、证件号、债务人姓名、账号、出生日期、外包序号
+
 联系资料-资料类型包含： 手机号、固话、地址、邮箱、姓名、微信、出生日期、单位名称
+
 催记信息-资料类型包含：手机号、固话、地址、邮箱、姓名、微信、出生日期、单位名称
 
-如果有拿不准的，可以找我@王硕 确认。
-
-二、使用限制
+# 二、使用限制
 
 1、项目引用合规Client
+
+```XML
 <dependencies>
     <dependency>
         <groupId>ioscar.compliancesystem</groupId>
@@ -18,56 +20,28 @@
         <version>1.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
+```
 
 2、每个项目引入合规依赖后默认对返回值进行切面脱敏。   
 
 3、使用示例目前分为4种，其中3种为特殊处理， 根据你的返回值使用以下某一种，关注对应的即可
 
-4、如果为案件详情的接口，请转到 案件详情特殊应用
+4、如果为案件详情的接口，请转到 **[案件详情特殊应用](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcncgOWsKWYcmwiaUHMFDhgBd)**
 
-规则项
-规则说明
-返回值示例
-规则链接
-普通规则
-返回值为案件信息
+| **规则项** | **规则说明**         | **返回值示例**                                               | **规则链接**                                                 |
+| ---------- | -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 普通规则   | 返回值为案件信息     |                                                              | **[规则1](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcngIeS6KGiIGW8QZJ05ppHbc)** |
+| 特殊规则1  | 返回值为联系资料信息 |                                                              | **[规则2](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnA6E04a4KK8USOEBZHI9tEf)** |
+| 特殊规则2  | 返回值为催记信息     |                                                              | **[规则3](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnqyoAecA80sEoIbspRO045g)** |
+| 特殊规则3  | 返回值为键值对       | Dto { name:"卡号",   value:"12345678" }或者Dto{ accountId: customerId:List<KVDto>{  name: value: }, { name: value: }} | **[规则4](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnwmOSU4CGYa2KEZgoZYJNoh)** |
 
-规则1
-特殊规则1
-返回值为联系资料信息
+# 三、具体使用示例
 
-规则2
-特殊规则2
-返回值为催记信息
+## 规则1-返回值为案件信息
 
-规则3
-特殊规则3
-返回值为键值对
-Dto { name:"卡号",   value:"12345678" }
-或者
-Dto{
- accountId: 
-customerId:
-List<KVDto>{
-   name:
-  value:
-  },
-  {
-  name:
-  value:
-  }
-}
-规则4
-
-
-
-三、具体使用示例
-
-
-规则1-返回值为案件信息
 保持你的返回对象继承DesensitizedBaseDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
 
-
+```Java
 /**
  * 脱敏基础类型
  *
@@ -114,12 +88,13 @@ public class DesensitizedBaseDto extends Basic implements IDesensitized {
 
 
 }
+```
 
+## 规则2-返回值为资料信息
 
-
-
-规则2-返回值为资料信息
 保持你的返回对象继承BaseContactDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
+
+```Java
 @ApiModel("脱敏基础资料类")
 public class BaseContactDto extends DesensitizedBaseDto {
 
@@ -152,10 +127,13 @@ private String oriContactTypeName;
 @ApiModelProperty("关系")
 private String relationName;
 }
+```
 
+## 规则3-返回值为催记信息
 
-规则3-返回值为催记信息
 保持你的返回对象继承BaseTelRecordDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
+
+```Java
 @ApiModel("催记脱敏基础类型")
 public class BaseTelRecordDto extends DesensitizedBaseDto {
 
@@ -190,10 +168,13 @@ private Object contactName;
     }
     
     }
+```
 
+## 规则4-返回值为键值对
 
-规则4-返回值为键值对
 保持你的返回对象继承BaseKeyValueDto，并且将你的键值改为父类中的键值名称并赋值
+
+```Java
 @ApiModel("脱敏基础键值类型")
 public class BaseKeyValueDto extends DesensitizedBaseDto {
 
@@ -207,15 +188,19 @@ public class BaseKeyValueDto extends DesensitizedBaseDto {
 
 
 }
+```
 
+# 四、案件详情特殊应用
 
-
-四、案件详情特殊应用
 案件详情可以对脱敏字段申请明文查看并且在脱敏过程中需要修改字段类型，在返回时需要区分案件详情与其他功能
 
-使用示例
+## 使用示例
+
 在controller层，返回方法添加注解 @ClearTextAnnotation
+
 使用示例：
+
+```Java
 /**
  * 案件详情页根据案件id获取联系电话
  * hao
@@ -229,11 +214,15 @@ public class BaseKeyValueDto extends DesensitizedBaseDto {
 public Result<ContactFilterDto> getContactTelephoneByCaseId(@Validated @RequestBody ContactFilterParamBo paramBo) {
     return caseContactService.getContactTelephoneByCaseId(paramBo);
 }
+```
 
+## 案件详情-案件信息
 
-案件详情-案件信息
 保持你的返回对象继承DynamicDesensitizedBaseDto，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
-注：案件详情返回的字段脱敏过程中需要修改字段类型，所以字段默认都为Object类型
+
+**注：案件详情返回的字段脱敏过程中需要修改字段类型，所以字段默认都为Object类型**
+
+```Java
 @ApiModel("脱敏基础类型-案件详情")
 public class DynamicDesensitizedBaseDto extends Basic implements IDesensitized {
 
@@ -270,10 +259,13 @@ public class DynamicDesensitizedBaseDto extends Basic implements IDesensitized {
     private Object debtorName;
     
     }
+```
 
+## 案件详情-联系资料：
 
-案件详情-联系资料：
 保持你的返回对象继承BaseContactDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
+
+```Java
 @ApiModel("脱敏基础资料类")
 public class BaseContactDto extends DesensitizedBaseDto {
 
@@ -306,10 +298,13 @@ private String oriContactTypeName;
 @ApiModelProperty("关系")
 private String relationName;
 }
+```
 
+## 案件详情-催记：
 
-案件详情-催记：
 保持你的返回对象继承BaseTelRecordDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
+
+```Java
 @ApiModel("催记脱敏基础类型")
 public class BaseTelRecordDto extends DesensitizedBaseDto {
 
@@ -337,12 +332,19 @@ public class BaseTelRecordDto extends DesensitizedBaseDto {
     }
     
     }
+```
 
-五、数据导出特殊应用
+# 五、数据导出特殊应用
+
 数据导出不会经过定义的Response拦截器，需要在数据导出查询方法上添加方法注解
-@DesensitizedAnnotation(strategy = ComplianceStrategy.class,using=UsingRuleType.OVERALL,property = SensitiveProperty.class)
 
-导出数据-使用示例
+```Java
+@DesensitizedAnnotation(strategy = ComplianceStrategy.class,using=UsingRuleType.OVERALL,property = SensitiveProperty.class)
+```
+
+## 导出数据-使用示例
+
+```Java
 @Service
 @Slf4j
 public class DorisCaseResultServiceImpl extends ServiceImpl<DorisCaseResultMapper, DorisCaseResult> implements DorisCaseResultService {
@@ -358,27 +360,38 @@ public DorisCaseListResultDto exportCaseAccountPageApi(QueryTelCaseApiBo bo) {
   }
      
 }
+```
 
+**注：导出的查询方法与返回给****前端****的查询不能为同一个，否则会重复脱敏。**
 
-注：导出的查询方法与返回给前端的查询不能为同一个，否则会重复脱敏。
+# 六、拓展应用
 
-六、拓展应用
-1、以上字段为合规要求脱敏的必须字段，如果你有自己的字段需要做特殊处理，可以在相应方法添加方法注解，在字段添加字段注解
+1、以上字段为合规要求脱敏的必须字段，如果你有自己的字段需要做特殊处理，可以在相应方法添加[方法注解](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcne6quUYiKQ0soA7bopWExCe)，在字段添加[字段注解](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnUesoqGuQGsiGSwOAe4qgyc)
 
-方法注解
+## 方法注解
+
+```Java
 @DesensitizedAnnotation(strategy = ComplianceStrategy.class,using=UsingRuleType.OVERALL,property = SensitiveProperty.class)
-- strategy（策略规则）：字段脱敏具体实施的规则，ComplianceStrategy.class是合规的策略规则，实现IStrategy接口可以自定义应用策略
-- using（规则应用频次）:  分为三种，OVERALL（整体应用，默认），ROW（行应用），FIELD（字段应用）
-- property（属性）：存储的是当前对象信息，可以在具体处理字段时应用，实现IBaseSensitiveProperty接口，可以自定义属性的实现方式与使用方式。
+```
 
+- **strategy（策略规则）：**字段脱敏具体实施的规则，ComplianceStrategy.class是合规的策略规则，实现IStrategy接口可以自定义应用策略
 
-字段注解
+- **using（规则应用频次）:**  分为三种，*OVERALL（整体应用，****默认****），ROW（行应用），FIELD（字段应用）*
+
+- **property（属性）：**存储的是当前对象信息，可以在具体处理字段时应用，实现IBaseSensitiveProperty接口，可以自定义属性的实现方式与使用方式。
+
+## 字段注解
+
+```Java
 @DesensitizedFieldAnnotation(value = "资料内容",sensitive = ContactDesensitized.class)
-- sensitive（脱敏实现类）：可以针对不同的字段进行这个类的实现，实现ISensitive接口即可
+```
 
+- **sensitive（脱敏实现类）：**可以针对不同的字段进行这个类的实现，实现ISensitive接口即可
 
-使用限制
+## 使用限制
+
 1、为避免不必要的返回值进行无效脱敏，需要给返回值做标记，目前的使用方式需要在返回值上实现空接口IDesensitized
 
 2、如果在方法上加注解无效，需要查看添加注解的方法是不是内部调用，基于Spring AOP代理的机制，方法内部调用会导致注解无效（和事务传递的性质一样）
-可以看文章了解：Aspect Oriented Programming with Spring
+
+可以看文章了解：[Aspect Oriented Programming with Spring](https://docs.spring.io/spring-framework/docs/3.1.x/spring-framework-reference/html/aop.html#aop-understanding-aop-proxies)
