@@ -2,7 +2,7 @@
 
 如果查询的数据中包含以下字段，那就需要脱敏
 
-案件信息包含：卡号、证件号、债务人姓名、账号、出生日期、外包序号
+信息包含：卡号、证件号、姓名、账号、出生日期、外包序号
 
 联系资料-资料类型包含： 手机号、固话、地址、邮箱、姓名、微信、出生日期、单位名称
 
@@ -10,34 +10,22 @@
 
 # 二、使用限制
 
-1、项目引用合规Client
+1、项目引入依赖后默认对返回值进行切面脱敏。   
 
-```XML
-<dependencies>
-    <dependency>
-        <groupId>ioscar.compliancesystem</groupId>
-        <artifactId>compliance-client</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-```
+2、使用示例目前分为4种，其中3种为特殊处理， 根据你的返回值使用以下某一种，关注对应的即可
 
-2、每个项目引入合规依赖后默认对返回值进行切面脱敏。   
-
-3、使用示例目前分为4种，其中3种为特殊处理， 根据你的返回值使用以下某一种，关注对应的即可
-
-4、如果为案件详情的接口，请转到 **案件详情特殊应用**
+3、如果为特殊的接口，请转到 **特殊应用**
 
 | **规则项** | **规则说明**         | **返回值示例**                                               | **规则链接** |
 | ---------- | -------------------- | ------------------------------------------------------------ | ------------ |
-| 普通规则   | 返回值为案件信息     |                                                              | **规则1**    |
+| 普通规则   | 返回值为特殊信息     |                                                              | **规则1**    |
 | 特殊规则1  | 返回值为联系资料信息 |                                                              | **规则2**    |
 | 特殊规则2  | 返回值为催记信息     |                                                              | **规则3**    |
 | 特殊规则3  | 返回值为键值对       | Dto { name:"卡号",   value:"12345678" }或者Dto{ accountId: customerId:List<KVDto>{  name: value: }, { name: value: }} | **规则4**    |
 
 # 三、具体使用示例
 
-## 规则1-返回值为案件信息
+## 规则1-返回值为特殊信息
 
 保持你的返回对象继承DesensitizedBaseDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
 
@@ -79,9 +67,9 @@ public class DesensitizedBaseDto extends Basic implements IDesensitized {
     @DesensitizedFieldAnnotation(value = "账号", sensitive = AccountNumberDesensitized.class)
     private String accountNumber;
     /**
-     * 债务人姓名
+     * 姓名
      */
-    @ApiModelProperty("债务人姓名")
+    @ApiModelProperty("姓名")
     @DesensitizedFieldAnnotation(value = "姓名", sensitive = NameDesensitized.class)
     private String debtorName;
 
@@ -191,7 +179,7 @@ public class BaseKeyValueDto extends DesensitizedBaseDto {
 
 # 四、详情特殊应用
 
-案件详情可以对脱敏字段申请明文查看并且在脱敏过程中需要修改字段类型，在返回时需要区分案件详情与其他功能
+可以对脱敏字段申请明文查看并且在脱敏过程中需要修改字段类型，在返回时需要区分特殊与其他功能
 
 ## 使用示例
 
@@ -212,11 +200,11 @@ public Result<ContactFilterDto> getContactTelephoneByCaseId(@Validated @RequestB
 }
 ```
 
-## 案件详情-案件信息
+## 特殊信息
 
 保持你的返回对象继承DynamicDesensitizedBaseDto，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
 
-**注：案件详情返回的字段脱敏过程中需要修改字段类型，所以字段默认都为Object类型**
+**注：特殊返回的字段脱敏过程中需要修改字段类型，所以字段默认都为Object类型**
 
 ```Java
 @ApiModel("脱敏基础类型-详情")
@@ -248,16 +236,16 @@ public class DynamicDesensitizedBaseDto extends Basic implements IDesensitized {
     @DesensitizedFieldAnnotation(value = "账号", sensitive = AccountNumberDesensitized.class)
     private Object accountNumber;
     /**
-     * 债务人姓名
+     * 姓名
      */
-    @ApiModelProperty("债务人姓名")
+    @ApiModelProperty("姓名")
     @DesensitizedFieldAnnotation(value = "姓名", sensitive = NameDesensitized.class)
     private Object debtorName;
     
     }
 ```
 
-## 案件详情-联系资料：
+## 特殊-联系资料：
 
 保持你的返回对象继承BaseContactDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
 
@@ -296,7 +284,7 @@ private String relationName;
 }
 ```
 
-## 案件详情-催记：
+## 特殊-催记：
 
 保持你的返回对象继承BaseTelRecordDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
 
@@ -362,7 +350,6 @@ public DorisCaseListResultDto exportCaseAccountPageApi(QueryTelCaseApiBo bo) {
 
 # 六、拓展应用
 
-1、以上字段为合规要求脱敏的必须字段，如果你有自己的字段需要做特殊处理，可以在相应方法添加[方法注解](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcne6quUYiKQ0soA7bopWExCe)，在字段添加[字段注解](https://icbf-plus.feishu.cn/docx/doxcnVWwBVAVEHYrRyECZIxXLTb#doxcnUesoqGuQGsiGSwOAe4qgyc)
 
 ## 方法注解
 
@@ -370,7 +357,7 @@ public DorisCaseListResultDto exportCaseAccountPageApi(QueryTelCaseApiBo bo) {
 @DesensitizedAnnotation(strategy = ComplianceStrategy.class,using=UsingRuleType.OVERALL,property = SensitiveProperty.class)
 ```
 
-- **strategy（策略规则）：**字段脱敏具体实施的规则，ComplianceStrategy.class是合规的策略规则，实现IStrategy接口可以自定义应用策略
+- **strategy（策略规则）：**字段脱敏具体实施的规则，ComplianceStrategy.class是策略规则，实现IStrategy接口可以自定义应用策略
 
 - **using（规则应用频次）:**  分为三种，*OVERALL（整体应用，****默认****），ROW（行应用），FIELD（字段应用）*
 
