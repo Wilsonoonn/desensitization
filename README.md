@@ -284,12 +284,12 @@ private String relationName;
 }
 ```
 
-## 特殊-催记：
+## 特殊：
 
 保持你的返回对象继承BaseTelRecordDto ，并且如果你的结果类中有和父类相同的字段，需要更改为父类字段
 
 ```Java
-@ApiModel("催记脱敏基础类型")
+@ApiModel("脱敏基础类型")
 public class BaseTelRecordDto extends DesensitizedBaseDto {
 
     /**
